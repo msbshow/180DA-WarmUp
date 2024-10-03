@@ -47,21 +47,32 @@ def main():
         # This method returns True/False as well
         # as the video frame.
         ret, frame = cap.read()
- 
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
+        lower_blue = np.array([60, 35, 140]) 
+        upper_blue = np.array([180, 255, 255]) 
+        mask = cv2.inRange(hsv, lower_blue, upper_blue) 
+        result = cv2.bitwise_and(frame, frame, mask = mask) 
+  
+        cv2.imshow('frame', frame) 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+        #cv2.imshow('mask', mask) 
+        #cv2.imshow('result', result) 
+        #cv2.waitKey(0) 
         # Use every frame to calculate the foreground mask and update
         # the background
-        fg_mask = back_sub.apply(frame)
+        fg_mask = back_sub.apply(result)
  
-        # Close dark gaps in foreground object using closing
+        # # Close dark gaps in foreground object using closing
         fg_mask = cv2.morphologyEx(fg_mask, cv2.MORPH_CLOSE, kernel)
  
-        # Remove salt and pepper noise with a median filter
+        # # Remove salt and pepper noise with a median filter
         fg_mask = cv2.medianBlur(fg_mask, 5) 
          
-        # Threshold the image to make it either black or white
+        # # Threshold the image to make it either black or white
         _, fg_mask = cv2.threshold(fg_mask,127,255,cv2.THRESH_BINARY)
  
-        # Find the index of the largest contour and draw bounding box
+        # # Find the index of the largest contour and draw bounding box
         fg_mask_bb = fg_mask
         contours, hierarchy = cv2.findContours(fg_mask_bb,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)[-2:]
         areas = [cv2.contourArea(c) for c in contours]

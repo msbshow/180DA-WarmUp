@@ -48,9 +48,9 @@ def main():
         # as the video frame.
         ret, frame = cap.read()
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV) 
-        lower_blue = np.array([60, 35, 140]) 
-        upper_blue = np.array([180, 255, 255]) 
-        mask = cv2.inRange(hsv, lower_blue, upper_blue) 
+        lower = np.array([20, 35, 140]) 
+        upper = np.array([100, 255, 255]) 
+        mask = cv2.inRange(hsv, lower, upper) 
         result = cv2.bitwise_and(frame, frame, mask = mask) 
   
         cv2.imshow('frame', frame) 
